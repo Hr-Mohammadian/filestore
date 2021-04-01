@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Rules;
+namespace Hamoh\User\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class ValidPassword implements Rule
+class ValidMobile implements Rule
 {
     /**
      * Create a new rule instance.
@@ -25,8 +25,8 @@ class ValidPassword implements Rule
      */
     public function passes($attribute, $value)
     {
-        //
-        return preg_match('/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/',$value);
+        //,'regex:/[0-9]{10,14}/'
+        return preg_match('/^[0-9]{10,14}$/',$value);
     }
 
     /**
@@ -36,6 +36,6 @@ class ValidPassword implements Rule
      */
     public function message()
     {
-        return 'رمز عبور باید حداقل 8 کاراکتر و ترکیبی از حروف بزرگ، حروف کوچک، اعداد باشد.';
+        return 'شماره موبایل باید بین 9 تا 14 رقم و بدون فاصله باشد.';
     }
 }

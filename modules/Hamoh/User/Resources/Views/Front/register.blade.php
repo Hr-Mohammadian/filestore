@@ -1,4 +1,4 @@
-@extends('auth.master')
+@extends('User::Front.master')
 @section('content')
 
     <form class="form" method="POST" action="{{ route('register') }}">
@@ -64,10 +64,10 @@
             <span class="rules">رمز عبور باید حداقل 8 کاراکتر و ترکیبی از حروف بزرگ، حروف کوچک، اعداد باشد.</span>
             <br>
             <button class="btn continue-btn">ثبت نام و ادامه</button>
+            <div class="form-footer">
+                <a href="{{route('login')}}">صفحه ورود</a>
+            </div>
+        </div>
 
-        </div>
-        <div class="form-footer">
-            <a href="{{route('login')}}">صفحه ورود</a>
-        </div>
     </form>
 @endsection
