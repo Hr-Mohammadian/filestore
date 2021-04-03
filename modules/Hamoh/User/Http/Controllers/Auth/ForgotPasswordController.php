@@ -3,7 +3,13 @@
 namespace Hamoh\User\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Hamoh\User\Http\Requests\ResetPasswordVerifyCodeRequest;
+use Hamoh\User\Http\Requests\VerifyCodeRequest;
+use Hamoh\User\Models\User;
+use Hamoh\User\Repositories\UserRepo;
+use Hamoh\User\Services\VerifyCodeService;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Hamoh\User\Http\Requests\SendResetPasswordVerifyCodeRequest;
 
 class ForgotPasswordController extends Controller
 {
@@ -23,5 +29,30 @@ class ForgotPasswordController extends Controller
     public function showLinkRequestForm()
     {
         return view('User::Front.passwords.email');
+    }
+
+    public function showVerifyCodeRequestForm()
+    {
+        return view('User::Front.passwords.email');
+    }
+
+    public function sendVerifyCodeEmail(SendResetPasswordVerifyCodeRequest $request)
+    {
+        $user = resolve(UserRepo::class)->findByEmail($request->email);
+        if ($user && ! VerifyCodeService::has($user->id)){
+            $user->sendResetPasswordRequestNotification();
+        }
+        return view('User::Front.passwords.enter-verify-code-form');
+    }
+
+    public function checkVerifyCode(ResetPasswordVerifyCodeRequest $request)
+    {
+        $user = resolve(UserRepo::class)->findByEmail($request->email);
+        if (!VerifyCodeService::check($user->id,$request->verify_code)){
+            return back()->withErrors(['verify_code' => 'کد وارد شده معتبر نمیباشد']);
+        };
+        auth()->loginUsingId($user->id);
+        return redirect()->route('password.showResetForm');
+
     }
 }

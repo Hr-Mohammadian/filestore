@@ -4,6 +4,8 @@ namespace Hamoh\User\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use Hamoh\User\Http\Requests\VerifyCodeRequest;
+use Hamoh\User\Services\VerifyCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\VerifiesEmails;
 
@@ -37,7 +39,7 @@ class VerificationController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('signed')->only('verify');
+//        $this->middleware('signed')->only('verify');
         $this->middleware('throttle:6,1')->only('verify', 'resend');
     }
     public function show(Request $request)
@@ -46,4 +48,15 @@ class VerificationController extends Controller
             ? redirect($this->redirectPath())
             : view('User::Front.verify');
     }
+
+    public function verify(VerifyCodeRequest $request)
+    {
+        if(! VerifyCodeService::check(auth()->id(),$request->verify_code)){
+            return back()->withErrors(['verify_code' => 'کد وارد شده معتبر نمیباشد']);
+        }
+        auth()->user()->markEmailAsVerified();
+        return redirect()->route('home');
+
+    }
+
 }

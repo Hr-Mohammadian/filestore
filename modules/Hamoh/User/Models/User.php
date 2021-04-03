@@ -2,10 +2,12 @@
 
 namespace Hamoh\User\Models;
 
+use Hamoh\User\Notifications\ResetPasswordRequestNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Hamoh\User\Notifications\VerifyMailNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -42,4 +44,15 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function sendEmailVerificationNotification()
+    {
+
+        $this->notify(new VerifyMailNotification());
+    }
+    public function sendResetPasswordRequestNotification()
+    {
+
+        $this->notify(new ResetPasswordRequestNotification());
+    }
 }
